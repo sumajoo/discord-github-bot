@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test node --loader ts-node/esm --test test/index.test.js"
+    "test": "NODE_ENV=test node --loader ts-node/esm --test test/*.test.js"
   },
   "keywords": [],
   "author": "",
