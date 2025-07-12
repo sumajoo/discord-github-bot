@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx tsc src/deploy-commands.ts --module es2020 --target es2020 --moduleResolution node --esModuleInterop --skipLibCheck --outDir dist && node --test"
   },
   "keywords": [],
   "author": "",
