@@ -1,22 +1,21 @@
-// index.js
-import { Client, GatewayIntentBits, Events, MessageFlags } from 'discord.js';
+import { Client, GatewayIntentBits, Events, MessageFlags, Interaction } from 'discord.js';
 import axios from 'axios';
 import 'dotenv/config';
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+export const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.once(Events.ClientReady, () =>
   console.log(`🤖 Eingeloggt als ${client.user!.tag}`)
 );
 
-client.on(Events.InteractionCreate, async interaction => {
+export async function handleIssueInteraction(interaction: Interaction) {
   if (!interaction.isChatInputCommand()) return;
   if (interaction.commandName !== 'issue') return;
 
   const title = interaction.options.getString('titel');
-  const body  = interaction.options.getString('beschreibung')!
+  const body  = interaction.options.getString('beschreibung')!;
 
-  await interaction.deferReply({ flags: MessageFlags.Ephemeral }); // bis zu 15 Minuten Zeit
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
   try {
     const { data } = await axios.post(
@@ -43,6 +42,10 @@ client.on(Events.InteractionCreate, async interaction => {
       '❌ Fehler beim Erstellen des Issues. Wende dich direkt an Jonas.'
     );
   }
-});
+}
 
-client.login(process.env.DISCORD_TOKEN);
+client.on(Events.InteractionCreate, handleIssueInteraction);
+
+if (process.env.NODE_ENV !== 'test') {
+  client.login(process.env.DISCORD_TOKEN);
+}
