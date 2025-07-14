@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 process.env.NODE_ENV = 'test';
-import { handleIssueInteraction } from '../src/index.ts';
+import { handleIssueInteraction, handleMessageCreate } from '../src/index.ts';
 import axios from 'axios';
 
 function createInteraction({ title = 'T', body = 'B' } = {}) {
@@ -19,6 +19,16 @@ function createInteraction({ title = 'T', body = 'B' } = {}) {
     user: { tag: 'User#1', id: '1' },
     deferReply: async ({ flags }) => { replies.deferred = flags === 64; },
     editReply: async msg => { replies.message = msg; },
+    _replies: replies,
+  };
+}
+
+function createMessage({ content = '', bot = false } = {}) {
+  const replies = [];
+  return {
+    content,
+    author: { bot },
+    reply: async msg => { replies.push(msg); },
     _replies: replies,
   };
 }
@@ -72,4 +82,22 @@ test('handles axios error', async () => {
   await handleIssueInteraction(interaction);
   axios.post = orig;
   assert.equal(interaction._replies.message, '❌ Fehler beim Erstellen des Issues. Wende dich direkt an Jonas.');
+});
+
+test('ignores bot messages', async () => {
+  const msg = createMessage({ content: 'Bug', bot: true });
+  await handleMessageCreate(msg);
+  assert.equal(msg._replies.length, 0);
+});
+
+test('ignores unrelated messages', async () => {
+  const msg = createMessage({ content: 'Hallo Welt' });
+  await handleMessageCreate(msg);
+  assert.equal(msg._replies.length, 0);
+});
+
+test('suggests issue on keywords', async () => {
+  const msg = createMessage({ content: 'Ich habe einen Bug gefunden' });
+  await handleMessageCreate(msg);
+  assert.equal(msg._replies[0], 'Möchtest du daraus ein GitHub-Issue erstellen? Verwende dazu den /issue Befehl.');
 });
