@@ -16,4 +16,10 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm test
+      - name: Deploy slash commands
+        if: github.event_name == 'push'
+        run: node --loader ts-node/esm src/deploy-commands.ts
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          APPLICATION_ID: ${{ secrets.APPLICATION_ID }}
 
