@@ -38,11 +38,14 @@ test('skips if not chat input command', async () => {
   interaction.isChatInputCommand = () => false;
   let called = false;
   const orig = axios.post;
-  /** @type {any} */ (axios).post = async () => { called = true; };
-  await handleIssueInteraction(interaction);
-  axios.post = orig;
-  assert.equal(called, false);
-  assert.equal(interaction._replies.deferred, false);
+  try {
+    /** @type {any} */ (axios).post = async () => { called = true; };
+    await handleIssueInteraction(interaction);
+    assert.equal(called, false);
+    assert.equal(interaction._replies.deferred, false);
+  } finally {
+    axios.post = orig;
+  }
 });
 
 test('skips if command name differs', async () => {
@@ -50,11 +53,14 @@ test('skips if command name differs', async () => {
   interaction.commandName = 'other';
   let called = false;
   const orig = axios.post;
-  /** @type {any} */ (axios).post = async () => { called = true; };
-  await handleIssueInteraction(interaction);
-  axios.post = orig;
-  assert.equal(called, false);
-  assert.equal(interaction._replies.deferred, false);
+  try {
+    /** @type {any} */ (axios).post = async () => { called = true; };
+    await handleIssueInteraction(interaction);
+    assert.equal(called, false);
+    assert.equal(interaction._replies.deferred, false);
+  } finally {
+    axios.post = orig;
+  }
 });
 
 test('creates issue and replies with url', async () => {
@@ -64,25 +70,31 @@ test('creates issue and replies with url', async () => {
   /** @type {{url?: string, payload?: any}} */
   let received;
   const orig = axios.post;
-  /** @type {any} */ (axios).post = async (url, payload) => {
-    received = { url, payload };
-    return { data: { html_url: 'https://example.com/1' } };
-  };
-  await handleIssueInteraction(interaction);
-  axios.post = orig;
-  assert.equal(interaction._replies.deferred, true);
-  assert.equal(interaction._replies.message, '✅ Issue erstellt: <https://example.com/1>');
-  assert.ok(received.url.includes('a/b/issues'));
-  assert.equal(received.payload.title, 'hi');
+  try {
+    /** @type {any} */ (axios).post = async (url, payload) => {
+      received = { url, payload };
+      return { data: { html_url: 'https://example.com/1' } };
+    };
+    await handleIssueInteraction(interaction);
+    assert.equal(interaction._replies.deferred, true);
+    assert.equal(interaction._replies.message, '✅ Issue erstellt: <https://example.com/1>');
+    assert.ok(received.url.includes('a/b/issues'));
+    assert.equal(received.payload.title, 'hi');
+  } finally {
+    axios.post = orig;
+  }
 });
 
 test('handles axios error', async () => {
   const interaction = createInteraction();
   const orig = axios.post;
-  /** @type {any} */ (axios).post = async () => { throw new Error('fail'); };
-  await handleIssueInteraction(interaction);
-  axios.post = orig;
-  assert.equal(interaction._replies.message, '❌ Fehler beim Erstellen des Issues. Wende dich direkt an Jonas.');
+  try {
+    /** @type {any} */ (axios).post = async () => { throw new Error('fail'); };
+    await handleIssueInteraction(interaction);
+    assert.equal(interaction._replies.message, '❌ Fehler beim Erstellen des Issues. Wende dich direkt an Jonas.');
+  } finally {
+    axios.post = orig;
+  }
 });
 
 test('ignores bot messages', async () => {
