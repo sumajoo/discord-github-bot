@@ -1,4 +1,4 @@
-name: TypeScript Check
+name: Type Check
 
 on:
   push:

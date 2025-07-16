@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 process.env.NODE_ENV = 'test';
-import { handleIssueInteraction, handleMessageCreate } from '../src/index.ts';
+import { handleIssueInteraction, handleMessageCreate } from '../src/index.js';
 import axios from 'axios';
 
 function createInteraction({ title = 'T', body = 'B' } = {}) {
@@ -38,7 +38,7 @@ test('skips if not chat input command', async () => {
   interaction.isChatInputCommand = () => false;
   let called = false;
   const orig = axios.post;
-  axios.post = async () => { called = true; };
+  /** @type {any} */ (axios).post = async () => { called = true; };
   await handleIssueInteraction(interaction);
   axios.post = orig;
   assert.equal(called, false);
@@ -50,7 +50,7 @@ test('skips if command name differs', async () => {
   interaction.commandName = 'other';
   let called = false;
   const orig = axios.post;
-  axios.post = async () => { called = true; };
+  /** @type {any} */ (axios).post = async () => { called = true; };
   await handleIssueInteraction(interaction);
   axios.post = orig;
   assert.equal(called, false);
@@ -61,9 +61,10 @@ test('creates issue and replies with url', async () => {
   const interaction = createInteraction({ title: 'hi', body: 'desc' });
   process.env.GITHUB_REPO = 'a/b';
   process.env.GITHUB_TOKEN = 't';
+  /** @type {{url?: string, payload?: any}} */
   let received;
   const orig = axios.post;
-  axios.post = async (url, payload) => {
+  /** @type {any} */ (axios).post = async (url, payload) => {
     received = { url, payload };
     return { data: { html_url: 'https://example.com/1' } };
   };
@@ -78,7 +79,7 @@ test('creates issue and replies with url', async () => {
 test('handles axios error', async () => {
   const interaction = createInteraction();
   const orig = axios.post;
-  axios.post = async () => { throw new Error('fail'); };
+  /** @type {any} */ (axios).post = async () => { throw new Error('fail'); };
   await handleIssueInteraction(interaction);
   axios.post = orig;
   assert.equal(interaction._replies.message, '❌ Fehler beim Erstellen des Issues. Wende dich direkt an Jonas.');
