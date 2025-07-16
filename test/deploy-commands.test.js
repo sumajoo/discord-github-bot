@@ -9,12 +9,17 @@ let origLog, origError;
 function createMockFn() {
 	function fn() {
 		fn.calls.push(Array.from(arguments));
+		// @ts-ignore
 		if (typeof fn.impl === 'function') return fn.impl.apply(this, arguments);
+		// @ts-ignore
 		return fn.returnValue;
 	}
 	fn.calls = [];
+	// @ts-ignore
 	fn.setImpl = function(impl) { fn.impl = impl; };
+	// @ts-ignore
 	fn.setReturn = function(val) { fn.returnValue = val; fn.impl = undefined; };
+	// @ts-ignore
 	fn.reset = function() { fn.calls = []; fn.impl = undefined; fn.returnValue = undefined; };
 	return fn;
 }
