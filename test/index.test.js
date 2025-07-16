@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 process.env.NODE_ENV = 'test';
-import { handleIssueInteraction, handleMessageCreate } from '../src/index.ts';
+import { handleIssueInteraction, handleMessageCreate } from '../src/index.js';
 import axios from 'axios';
 
 function createInteraction({ title = 'T', body = 'B' } = {}) {
