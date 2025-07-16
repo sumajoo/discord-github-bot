@@ -2,7 +2,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
 
 jobs:
@@ -12,14 +12,13 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
       - run: npm ci
       - run: npm test
       - name: Deploy slash commands
         if: github.event_name == 'push'
-        run: node --loader ts-node/esm src/deploy-commands.ts
+        run: node --loader ts-node/esm src/deploy-commands.js
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           APPLICATION_ID: ${{ secrets.APPLICATION_ID }}
-
