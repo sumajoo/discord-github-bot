@@ -3,7 +3,8 @@
     "checkJs": true,
     "allowJs": true,
     "target": "ES2022",
-    "module": "ESNext"
+    "module": "NodeNext",
+    "moduleResolution": "nodenext"
   },
   "include": ["src", "test"]
 }

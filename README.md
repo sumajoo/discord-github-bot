@@ -43,21 +43,15 @@ A Discord bot that allows you to create GitHub issues directly from Discord. Use
    GITHUB_REPO=username/repository-name
    ```
 
-4. **Compile TypeScript**
+4. **Register slash commands**
 
    ```bash
-   npx tsc
+   node src/deploy-commands.js
    ```
 
-5. **Register slash commands**
-
+5. **Start the bot**
    ```bash
-   node dist/deploy-commands.js
-   ```
-
-6. **Start the bot**
-   ```bash
-   node dist/index.js
+   node src/index.js
    ```
 
 ## ⚙️ Configuration
@@ -113,29 +107,21 @@ After successful creation, you'll receive a response like:
 ```
 discord-github-bot/
 ├── src/
-│   ├── deploy-commands.ts    # Register slash commands
-│   └── index.ts             # Main bot logic
+│   ├── deploy-commands.js    # Register slash commands
+│   └── index.js             # Main bot logic
 ├── package.json
-├── tsconfig.json
+├── jsconfig.json
 ├── .env                     # Environment variables (not in Git)
 └── README.md
 ```
 
 ## 🔧 Development
 
-### Compile and watch TypeScript
+To automatically reload the bot during development, consider using a tool like `nodemon`:
 
 ```bash
-npx tsc --watch
+npx nodemon src/index.js
 ```
-
-### Start the bot in development mode
-
-```bash
-npm run dev
-```
-
-(Note: add `"dev": "ts-node src/index.ts"` to the npm scripts)
 
 ## 📝 Commands
 
