@@ -15,7 +15,7 @@ export async function handleIssueInteraction(interaction) {
     if (interaction.commandName !== 'issue')
         return;
     const title = interaction.options.getString('titel');
-    const body = interaction.options.getString('beschreibung');
+    const body = interaction.options.getString('beschreibung') ?? '';
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
     try {
         const { data } = await axios.post(`https://api.github.com/repos/${process.env.GITHUB_REPO}/issues`, {

@@ -11,7 +11,7 @@ export async function deployCommands({ REST, Routes, SlashCommandBuilder }, log 
             .setDescription('Erstelle einen aussagekräftigen Titel für das Issue')
             .setRequired(true))
             .addStringOption(opt => opt.setName('beschreibung')
-            .setDescription('Beschreibe das Problem oder Feature ausführlich, beschriebe Schritte zum Reproduzieren.')
+            .setDescription('Beschreibe das Problem oder Feature ausführlich, beschreibe Schritte zum Reproduzieren.')
             .setRequired(false))
             .toJSON(),
     ];
